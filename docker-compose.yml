@@ -15,8 +15,8 @@ services:
       test: ["CMD-SHELL", "pg_isready -U radius -d radius_db"]
       interval: 5s
       timeout: 5s
-      retries: 10
-      start_period: 30s
+      retries: 15
+      start_period: 60s
 
   freeradius:
     image: freeradius/freeradius-server:latest
