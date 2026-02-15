@@ -1,0 +1,32 @@
+services:
+  db:
+    image: postgres:15
+    container_name: radius_db
+    restart: always
+    environment:
+      POSTGRES_USER: radius
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-your_password}
+      POSTGRES_DB: radius_db
+    volumes:
+      - ./db_data:/var/lib/postgresql/data
+      - ./radius_config/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+    # Postgres only inside Docker (no host port). Only FreeRADIUS (1812/1813) is exposed.
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U radius -d radius_db"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  freeradius:
+    image: freeradius/freeradius-server:latest
+    container_name: freeradius
+    restart: always
+    depends_on:
+      db:
+        condition: service_healthy
+    ports:
+      - "1812:1812/udp"
+      - "1813:1813/udp"
+    volumes:
+      - ./radius_config:/etc/raddb
+    command: ["radiusd", "-f", "-X"]
