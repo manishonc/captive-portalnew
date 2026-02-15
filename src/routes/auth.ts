@@ -85,14 +85,14 @@ async function validateUser(username: string, password: string): Promise<boolean
   return row.value === password;
 }
 
-app.get("/login", (c) => {
+app.get("/", (c) => {
   const redirectUrl =
     (c.req.query("redirect_url") || c.req.query("url") || "").trim() ||
     "/";
   return c.html(LOGIN_HTML(redirectUrl));
 });
 
-app.post("/login", async (c) => {
+app.post("/", async (c) => {
   const contentType = c.req.header("content-type") ?? "";
   let username: string;
   let password: string;
