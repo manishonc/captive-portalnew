@@ -10,7 +10,8 @@ services:
     volumes:
       - ./db_data:/var/lib/postgresql/data
       - ./radius_config/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
-    # No host port; only FreeRADIUS (1812/1813) is exposed. No healthcheck so DB is never "unhealthy".
+    ports:
+      - "5432:5432"   # so Bun app on host can connect via localhost:5432
 
   freeradius:
     image: freeradius/freeradius-server:latest
